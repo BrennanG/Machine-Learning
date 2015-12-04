@@ -27,19 +27,29 @@ sub getCluster {
 
 sub setCluster {
   my ($self, $cluster) = @_;
-  $self->{_cluster} = $cluster if defined($cluster);
-  return $self->{_cluster};
+  if (!defined($cluster)) {
+    die "Not enough args given to setCluster()";
+  }
+
+  $self->{_cluster} = $cluster;
 }
 
 sub getRating {
   my ($self, $movieId) = @_;
-  return $self->{_ratings}->{$movieId} if defined($movieId);
+  if (!defined($movieId)) {
+    die "Not enough args given to getRating()";
+  }
+
+  return $self->{_ratings}->{$movieId};
 }
 
 sub setRating {
   my ($self, $movieId, $rating) = @_;
-  $self->{_ratings}->{$movieId} = $rating if (defined($movieId) && defined($rating));
-  return $self->{_ratings}->{$movieId};
+  if (!defined($movieId) || !defined($rating)) {
+    die "Not enough args given to setRating()";
+  }
+
+  $self->{_ratings}->{$movieId} = $rating;
 }
 
 sub getRatings {
@@ -49,7 +59,11 @@ sub getRatings {
 
 sub hasRated {
   my ($self, $movieId) = @_;
-  return exists $self->{_ratings}->{$movieId} if defined($movieId);
+  if (!defined($movieId)) {
+    die "Not enough args given to hasRated()";
+  }
+
+  return exists $self->{_ratings}->{$movieId};
 }
 
 1;
