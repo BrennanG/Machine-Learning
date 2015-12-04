@@ -50,7 +50,7 @@ foreach my $cluster (@$clusters) {
   my $newCenter = $cluster->getCenter()->getId();
   my $newRating = $cluster->getCenter()->getRating(1);
 
-  #print "$center $rating - $newCenter $newRating\n";
+  print "$center $rating - $newCenter $newRating\n";
 }
 
 # 3 Repeat 1 & 2 until nothing is re-labeled

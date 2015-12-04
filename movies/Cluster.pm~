@@ -102,7 +102,7 @@ sub assignNewCenters {
   }
 
   while(my($movieId, $rating) = each %ratingsHash) {
-      $ratingsHash{$movieId} = $ratingsHash{$movieId}/$ratingsCount{$movieId};
+      $ratingsHash{$movieId} = $ratingsHash{$movieId}/$count;
   }
 
   $newCenter->assignNewRatingsHash(\%ratingsHash);

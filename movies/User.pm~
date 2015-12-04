@@ -59,10 +59,6 @@ sub getRatings {
 
 sub assignNewRatingsHash {
   my ($self, $newRatings) = @_;
-  if (!defined($newRatings)) {
-    die "Not enough args given to assignNewRatingsHash()";
-  }
-
   $self->{_ratings} = $newRatings;
 }
 
