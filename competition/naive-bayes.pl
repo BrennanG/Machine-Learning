@@ -9,7 +9,7 @@ if ($#ARGV + 1 < 1) {
 }
 
 # Define Globals
-my $ALPHA = 0.5;
+my $ALPHA = 2;
 my $WORD_COUNT_GOOD = 126035;
 my $WORD_COUNT_BAD = 132586;
 

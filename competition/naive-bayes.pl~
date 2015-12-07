@@ -9,7 +9,7 @@ if ($#ARGV + 1 < 1) {
 }
 
 # Define Globals
-my $ALPHA = 0.5;
+my $ALPHA = 0.2;
 my $WORD_COUNT_GOOD = 126035;
 my $WORD_COUNT_BAD = 132586;
 
@@ -38,10 +38,9 @@ while (my $line = <$inputFile>) {
   my $goodProb = calcProbability(\@words, $goodVector, $WORD_COUNT_GOOD);
   my $badProb = calcProbability(\@words, $badVector, $WORD_COUNT_BAD);
 
-  if ($goodProb > $badProb) { print "$count,P\n"; }
-  else { print "$count,N\n"; } 
+  if ($goodProb > $badProb) { print $outputFile "$count,P\n"; }
+  else { print $outputFile "$count,N\n"; } 
 
-  print $outputFile "$count,P\n";
   $count = $count + 1;
 }
 
