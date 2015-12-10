@@ -4,32 +4,51 @@ use warnings;
 use User;
 use Cluster;
 
-my $K = 5; # Number of clusters
+# Predicts what each user in the ratingsToPredict.csv file would rate the specified movie
+# by putting each user into 1 of k clusters
 
+# Output: userId predictedRating
+
+# Arguments:
+#   trainingFile.csv
+#     -a movie ratings file (without the header line that describes each column)
+#     -userIds should be numbered from 1 to n
+#     -formatted as follows: userId,movieId,rating,timestamp
+#     -this is used as the training data
+#   ratingsToPredict.csv
+#     -a file with the same format as trainingFile.csv
+#     -userIds should also be numbered from 1 to n
+#     -the program will output a guess for each of these user's rating of the specified movie
+#   movieId
+#     -the id of the movie whose rating should be predicted for each user in ratingsToPredict.csv
+
+
+
+my $K = 4; # Number of clusters
 ########### MAIN ######################
 
 # Handle arguments
 if ($#ARGV + 1 < 3) {
-  print "Usage: $0 ratings.csv usersFile movieId\n";
+  print "Usage: $0 trainingFile.csv ratingsToPredict.csv movieId\n";
   exit;
 }
-my $ratingsFile = $ARGV[0];
-my $usersFile = $ARGV[1];
+my $trainingFile = $ARGV[0];
+my $ratingsToPredict = $ARGV[1];
 my $movieToPredict = $ARGV[2];
 
 # Create the $users and $clusters array references
-my $users = createUsersFromFile($ratingsFile);
+my $users = createUsersFromFile($trainingFile);
 my $clusters = createClusters($users);
 
 # Adjust the clusters by continually looping until no user changes clusters
 adjustClusters($users, $clusters);
 
-my $usersToCheck = createUsersFromFile($usersFile);
+my $usersToCheck = createUsersFromFile($ratingsToPredict);
 foreach my $userToCheck (@$usersToCheck) {
   my $closest = getClosestCluster($userToCheck, $clusters);
   my $ratingPrediction = $closest->getAverageRatingForMovie($movieToPredict);
-  my $id = $closest->getId();
-  print "$id - $ratingPrediction\n";
+  my $id = $userToCheck->getId();
+  print "$id $ratingPrediction\n";
 }
 
 
@@ -97,7 +116,8 @@ sub createClusters {
   return \@clusters;
 }
 
-# Calculates and returns the (Euclidian) distance between 2 users based on their ratings
+# Calculates and returns the distance between 2 users based on their ratings
+# Euclidian distance weighted by how many movies both users have rated ($numInCommon)
 sub calcDist {
   # Handle arguments
   my ($user1, $user2) = @_;
@@ -132,24 +152,9 @@ sub adjustClusters {
   # Loop until no user changes clusters
   my $count = 0;
   while (1) {
-    print "Iteration $count - ";
     # Loop through users and put them in their closest clusters
     my $userChangedClusters = 0;
     foreach my $user (@$users) {
-      #my $userId = $user->getId();
-      #my $closestCluster = $clusters->[0];
-      #my $closestDist;
-      ## Compare each cluster's center with user to find the closest
-      #foreach my $cluster (@$clusters) {
-      #  if ($userId == $cluster->getCenter()->getId()) { next; } # Skip if the user is the center
-
-      #  my $dist = calcDist($user, $cluster->getCenter());
-      #  if (!defined($closestDist) || $dist < $closestDist) {
-      #    $closestCluster = $cluster;
-      #    $closestDist = $dist;
-      #  }
-      #}
-
       my $closestCluster = getClosestCluster($user, $clusters);
 
       # Set the user's and cluster's fields if it changed
@@ -160,15 +165,12 @@ sub adjustClusters {
       }
     }
     
-    print "$userChangedClusters users changed\n";
-    
     # Break out if no user changed clusters
     if ($userChangedClusters == 0) { last; }
 
     # Assign new clusters centers
     foreach my $cluster (@$clusters) {
       my $num = $cluster->getNumOfUsers();
-      print "  $num\n";
       $cluster->assignNewCenter();
     }
 

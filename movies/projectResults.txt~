@@ -1,0 +1,11 @@
+Brennan Govreau
+Machine Learning
+Fall 2015
+
+For my project, I used a k-means clustering algorithm to predict how users would rate a specified movie. The training data I used was from movieLens. The program is written in PERL and takes in 3 arguments. The first is the training data, which is the ratings.csv file from movieLens with the header line removed. The second is a csv file with the same format as the ratings file that contains the users whose ratings you want predicted. The last argument is the id of the movie that you want predicted. More specific details on the arguments can be found at the top of k-means.pl in the header comments. 
+
+One thing I found is that it seems to be more common for movies to be rated 3-5 stars than it is for them to be rated 1-2.  As a result, just choosing a random movie id for the program to predict will give a rating of 3-4 stars more often than not. I used some unix tools to sift through the training data and find some movies that are often rated poorly, and passing them to my program does result in predictions of 1-2 stars. At first, when I was just using random movie ids, I was worried that my program wasn't working properly because it rarely gave 1-2 star ratings. For your convenience, here are some bad movies that my program will likely predict as 1-2 stars: 2701 (Wild Wild West), 3593 (Battlefield Earth), 2710 (The Blair Witch Project), 1562 (Batman & Robin).
+
+Because it seems that movies are more commonly rated 3-5 stars, if the specified movie has not been rated by any user in the cluster (unlikely, but it happened to me with a movie that is actually fairly well known, Mega Shark vs Giant Octopus), then the program outputs a default rating of 3 stars.
+
+Something to note about my program is that I did not use a typical Euclidian Distance. This is because Euclidian distance alone does not work for calculate distance between users, because most users have not rated the exact same movies. As a result, I use a Euclidian distance that is weighted by how many movies the users have both rated.
